@@ -41,4 +41,4 @@ spring:
 camunda:
   bpm:
     auto-deployment-enabled: true
-    deployment-resource-pattern: classpath:/bpm/**/*.bpmn,
+    deployment-resource-pattern: classpath:/bpm/**/*.bpmn20.xml,
