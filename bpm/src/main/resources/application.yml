@@ -1,0 +1,44 @@
+logging:
+  level:
+    sql: trace
+    org.springframework.web: trace
+    com.ledgertech: trace
+
+server:
+  port: 7070
+
+spring:
+  datasource:
+    initialization-mode: never
+    url: jdbc:h2:file:/work/data/demo/bpm
+    driverClassName: org.h2.Driver
+    username: user
+    password: pass
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://leonardo.ledgertech.com:7600/dex
+          jwk-set-uri: https://leonardo.ledgertech.com:7600/dex/keys
+
+camunda:
+  bpm:
+    auto-deployment-enabled: true
+    deployment-resource-pattern: classpath:/bpm/**/*.bpmn,
