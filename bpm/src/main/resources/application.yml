@@ -41,4 +41,21 @@ spring:
 camunda:
   bpm:
     auto-deployment-enabled: true
-    deployment-resource-pattern: classpath:/bpm/**/*.bpmn20.xml,
+    deployment-resource-pattern: classpath:/bpm/**/*.bpmn20.xml
+
+ledgertech:
+  corda:
+    nodes:
+      -
+        name: O=Customers1,L=London,C=GB
+        host: localhost
+        port: 10032
+        user: user1
+        password: test
+      -
+        name: O=Customers2,L=London,C=GB
+        host: localhost
+        port: 10033
+        user: user1
+        password: test
+
