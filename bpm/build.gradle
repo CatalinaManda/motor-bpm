@@ -10,7 +10,8 @@ dependencies {
     implementation "org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter:3.4.0"
     implementation "org.camunda.bpm.springboot:camunda-bpm-spring-boot-starter-rest:3.4.0"
 
-    implementation "org.springframework.security:spring-security-oauth2-resource-server"
+    implementation "org.springframework.boot:spring-boot-starter-amqp"
+
     implementation "org.springframework.security:spring-security-oauth2-jose"
 
     implementation "$corda_group:corda-rpc:$corda_version"

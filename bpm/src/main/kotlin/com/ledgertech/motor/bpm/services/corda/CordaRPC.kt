@@ -1,4 +1,4 @@
-package com.ledgertech.motor.bpm.services
+package com.ledgertech.motor.bpm.services.corda
 
 import com.ledgertech.motor.bpm.config.CordaNodeConfiguration
 import com.ledgertech.motor.bpm.config.CordaConfiguration
