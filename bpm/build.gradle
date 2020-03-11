@@ -13,7 +13,7 @@ dependencies {
     implementation "org.springframework.security:spring-security-oauth2-resource-server"
     implementation "org.springframework.security:spring-security-oauth2-jose"
 
-    implementation "$corda_release_group:corda-rpc:$corda_release_version"
+    implementation "$corda_group:corda-rpc:$corda_version"
 
     implementation "javax.json:javax.json-api:1.1.4"
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1"
