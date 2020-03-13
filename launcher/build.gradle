@@ -13,6 +13,7 @@ dependencies {
 
     implementation project(':bpm')
     implementation project(':broker')
+    implementation project(':sender')
 }
 
 bootRun {
