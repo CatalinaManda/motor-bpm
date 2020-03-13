@@ -1,0 +1,4 @@
+dependencies {
+    implementation "javax.json:javax.json-api:1.1.4"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1"
+}
