@@ -1,3 +1,4 @@
 rootProject.name = "motor-bpm"
 
-include "bpm"
+include 'bpm'
+include 'launcher'

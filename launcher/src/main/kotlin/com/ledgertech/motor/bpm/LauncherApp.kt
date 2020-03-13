@@ -8,9 +8,9 @@ import org.springframework.context.annotation.ComponentScan
 
 @ComponentScan(basePackages=["com.ledgertech.motor"])
 @SpringBootApplication(exclude = [ArtemisAutoConfiguration::class, LiquibaseAutoConfiguration::class])
-class BpmApp {
+class LauncherApp {
 }
 
 fun main(args: Array<String>) {
-    runApplication<BpmApp>()
+    runApplication<LauncherApp>()
 }

@@ -1,6 +1,5 @@
 apply plugin: "org.springframework.boot"
 apply plugin: "io.spring.dependency-management"
-apply plugin: 'maven-publish'
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-security"
@@ -33,29 +32,10 @@ dependencies {
     testImplementation "org.springframework.security:spring-security-test"
 }
 
-publishing {
-    repositories {
-        maven {
-            def releasesRepoUrl = 'https://nexus.ledgertech.com/repository/lt-maven-release/'
-            def snapshotsRepoUrl = 'https://nexus.ledgertech.com/repository/lt-maven-snapshot/'
-
-            url = project.getVersion().endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            credentials {
-                username project.'repos.maven2.ledgertech.username'
-                password project.'repos.maven2.ledgertech.password'
-            }
-        }
-    }
-
-    publications {
-        maven(MavenPublication) {
-            artifactId = "motor-bpm"
-            from components.java
-        }
-    }
+bootJar {
+    enabled = false
 }
 
-bootRun {
-    // support passing -Dsystem.property=value to bootRun task
-    systemProperties = System.properties
+jar {
+    enabled = true
 }

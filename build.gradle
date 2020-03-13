@@ -53,6 +53,7 @@ subprojects {
     apply plugin: "org.jetbrains.kotlin.plugin.noarg"
     apply plugin: "org.jetbrains.kotlin.plugin.jpa"
     apply plugin: "org.jetbrains.kotlin.plugin.allopen"
+    apply plugin: 'maven-publish'
 
     version = parent.version
     group = parent.group
@@ -85,6 +86,28 @@ subprojects {
             apiVersion = "1.2"
             jvmTarget = "1.8"
             javaParameters = true
+        }
+    }
+
+    publishing {
+        repositories {
+            maven {
+                def releasesRepoUrl = 'https://nexus.ledgertech.com/repository/lt-maven-release/'
+                def snapshotsRepoUrl = 'https://nexus.ledgertech.com/repository/lt-maven-snapshot/'
+
+                url = project.getVersion().endsWith('-SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                credentials {
+                    username project.'repos.maven2.ledgertech.username'
+                    password project.'repos.maven2.ledgertech.password'
+                }
+            }
+        }
+
+        publications {
+            maven(MavenPublication) {
+                artifactId = project.name
+                from components.java
+            }
         }
     }
 }
