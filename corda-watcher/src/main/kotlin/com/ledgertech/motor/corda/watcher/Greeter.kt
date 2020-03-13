@@ -1,4 +1,4 @@
-package com.ledgertech.motor.bpm.services.amqp
+package com.ledgertech.motor.corda.watcher
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
@@ -6,9 +6,11 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 
 @Component
-class Sender (@Autowired val rabbitTemplate: RabbitTemplate): CommandLineRunner {
+class Greeter (
+        @Autowired val rabbitTemplate: RabbitTemplate
+): CommandLineRunner {
     override fun run(vararg strings: String) {
-        val messageText = "Hello World"
+        val messageText = "Corda watcher is running."
 
         this.rabbitTemplate.convertAndSend("default", messageText)
     }

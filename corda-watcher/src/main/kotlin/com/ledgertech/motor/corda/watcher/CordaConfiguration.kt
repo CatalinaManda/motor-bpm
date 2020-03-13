@@ -1,4 +1,4 @@
-package com.ledgertech.motor.bpm.config
+package com.ledgertech.motor.corda.watcher
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Configuration

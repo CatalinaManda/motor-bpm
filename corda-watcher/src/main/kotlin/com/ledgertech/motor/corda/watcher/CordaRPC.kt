@@ -1,7 +1,5 @@
-package com.ledgertech.motor.bpm.services.corda
+package com.ledgertech.motor.corda.watcher
 
-import com.ledgertech.motor.bpm.config.CordaNodeConfiguration
-import com.ledgertech.motor.bpm.config.CordaConfiguration
 import net.corda.client.rpc.CordaRPCClient
 import net.corda.client.rpc.CordaRPCConnection
 import net.corda.client.rpc.GracefulReconnect
@@ -15,7 +13,6 @@ import net.corda.core.utilities.NetworkHostAndPort
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.annotation.PostConstruct

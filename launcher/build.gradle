@@ -13,7 +13,7 @@ dependencies {
 
     implementation project(':bpm')
     implementation project(':broker')
-    implementation project(':sender')
+    implementation project(':corda-watcher')
 }
 
 bootRun {
