@@ -3,6 +3,7 @@ logging:
     sql: trace
     org.springframework.web: trace
     com.ledgertech: trace
+    org.apache.qpid: info
 
 server:
   port: 7070
@@ -37,6 +38,13 @@ spring:
         jwt:
           issuer-uri: https://leonardo.ledgertech.com:7600/dex
           jwk-set-uri: https://leonardo.ledgertech.com:7600/dex/keys
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: default
 
 camunda:
   bpm:

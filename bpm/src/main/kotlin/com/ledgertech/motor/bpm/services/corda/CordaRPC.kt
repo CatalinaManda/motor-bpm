@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
 // Almost copy paste from corda-motor-ws project
-@Component
+//@Component
 class CordaRPC {
     @Autowired
     lateinit var cordaNetworkConfig: CordaConfiguration

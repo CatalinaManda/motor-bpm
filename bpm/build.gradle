@@ -12,6 +12,13 @@ dependencies {
 
     implementation "org.springframework.boot:spring-boot-starter-amqp"
 
+    implementation ("org.apache.qpid:qpid-broker-core:7.1.8") {
+        // guava 27 is conflicting with 28 brought by corda serialization via RPC module :((
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    implementation "org.apache.qpid:qpid-broker-plugins-amqp-0-8-protocol:7.1.8"
+    implementation "org.apache.qpid:qpid-broker-plugins-memory-store:7.1.8"
+
     implementation "org.springframework.security:spring-security-oauth2-jose"
 
     implementation "$corda_group:corda-rpc:$corda_version"
