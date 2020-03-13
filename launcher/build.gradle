@@ -12,6 +12,7 @@ dependencies {
     testImplementation "org.springframework.security:spring-security-test"
 
     implementation project(':bpm')
+    implementation project(':broker')
 }
 
 bootRun {
