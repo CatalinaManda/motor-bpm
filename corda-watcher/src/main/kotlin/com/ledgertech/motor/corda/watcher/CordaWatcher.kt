@@ -49,24 +49,32 @@ class CordaWatcher(val x500Name: String) {
     fun lookForEvents() {
         logger.info("{}: Looking for states changes", this.x500Name)
 
-        var conn = this.rpc.ops(this.x500Name)
-        val timeCondition: QueryCriteria.TimeCondition = QueryCriteria.TimeCondition(
-                QueryCriteria.TimeInstantType.RECORDED,
-                ColumnPredicate.Between(this.state.getTime(this.x500Name), Instant.now()))
+        val conn = this.rpc.connection(this.x500Name)
 
-        val pages = conn?.vaultQueryByCriteria(
-                contractStateType = LinearState::class.java,
-                criteria = QueryCriteria.VaultQueryCriteria().withTimeCondition(timeCondition))
+        if (conn == null) {
+            logger.info("{}: no connection", this.x500Name)
+        } else {
+            conn.use {
+                val proxy = it.proxy
+                val timeCondition: QueryCriteria.TimeCondition = QueryCriteria.TimeCondition(
+                        QueryCriteria.TimeInstantType.RECORDED,
+                        ColumnPredicate.Between(this.state.getTime(this.x500Name), Instant.now()))
 
-        logger.debug("{}: there are {} new events", this.x500Name, pages?.states?.size ?: 0)
+                val pages = proxy.vaultQueryByCriteria(
+                        contractStateType = LinearState::class.java,
+                        criteria = QueryCriteria.VaultQueryCriteria().withTimeCondition(timeCondition))
 
-        if (pages != null) {
-            var states = pages.states.zip(pages.statesMetadata).sortedBy {  it.second.recordedTime }
+                logger.debug("{}: there are {} new events", this.x500Name, pages?.states?.size ?: 0)
 
-            states.forEach { (state, meta) ->
-                notifyEvent(state, meta.recordedTime)
+                if (pages != null) {
+                    var states = pages.states.zip(pages.statesMetadata).sortedBy { it.second.recordedTime }
 
-                this.state.updateTime(this.x500Name, meta.recordedTime)
+                    states.forEach { (state, meta) ->
+                        notifyEvent(state, meta.recordedTime)
+
+                        this.state.updateTime(this.x500Name, meta.recordedTime)
+                    }
+                }
             }
         }
     }

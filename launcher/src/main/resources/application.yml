@@ -2,7 +2,7 @@ logging:
   level:
     sql: trace
     org.springframework.web: info
-    com.ledgertech: info
+    com.ledgertech: debug
     org.apache.qpid: info
 
 server:

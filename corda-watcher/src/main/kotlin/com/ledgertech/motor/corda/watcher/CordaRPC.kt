@@ -4,7 +4,9 @@ import com.ledgertech.motor.corda.messages.LinearId
 import com.ledgertech.motor.corda.messages.StateChangedEvent
 import com.ledgertech.motor.corda.messages.StateType
 import net.corda.client.rpc.CordaRPCClient
+import net.corda.client.rpc.CordaRPCClientConfiguration
 import net.corda.client.rpc.CordaRPCConnection
+import net.corda.client.rpc.GracefulReconnect
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.messaging.CordaRPCOps
 import net.corda.core.utilities.NetworkHostAndPort
@@ -12,6 +14,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import java.time.Duration
 import java.time.Instant
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -42,26 +45,48 @@ class CordaRPC {
     fun ops(x500Name: String): CordaRPCOps? {
         val x500NameAsObject = CordaX500Name.parse(x500Name)
 
-        if (!(connections.containsKey(x500NameAsObject) && connections[x500NameAsObject] != null)) {
+        if (!connections.containsKey(x500NameAsObject)) {
             val config = cordaNetworkConfig.nodes.firstOrNull { it.name == x500Name }
 
             if (config != null) {
-                connections[x500NameAsObject] = initializeConnection(x500NameAsObject, config)
+                var conn = initializeConnection(x500NameAsObject, config)
+
+                if (conn != null) {
+                    connections[x500NameAsObject] = conn
+                }
             }
         }
 
         return connections[x500NameAsObject]?.proxy
     }
 
-    @PostConstruct
-    fun initializeConnections() {
-        logger.info("Initializing RPC connections to Corda nodes ...")
-        cordaNetworkConfig.nodes.forEach {
-            val x500 = CordaX500Name.parse(it.name)
-            connections[x500] = initializeConnection(x500, it)
+    @Synchronized
+    fun connection(x500Name: String): CordaRPCConnection? {
+        val x500NameAsObject = CordaX500Name.parse(x500Name)
+        val config = cordaNetworkConfig.nodes.firstOrNull { it.name == x500Name }
+        var conn: CordaRPCConnection? = null
+
+        if (config != null) {
+            conn = initializeConnection(x500NameAsObject, config, false)
         }
 
-        logger.info("Connections started ...")
+        return conn
+    }
+
+    //@PostConstruct
+    fun initializeConnections() {
+        logger.info("Initializing RPC connections to Corda nodes ...")
+
+        cordaNetworkConfig.nodes.forEach {
+            val x500 = CordaX500Name.parse(it.name)
+            val conn = initializeConnection(x500, it)
+
+            if (conn != null) {
+                connections[x500] = conn
+            }
+        }
+
+        logger.info("Connections initialized.")
     }
 
     @PreDestroy
@@ -76,15 +101,32 @@ class CordaRPC {
         }
     }
 
-    private fun initializeConnection(x500: CordaX500Name, config: CordaNodeConfiguration): CordaRPCConnection? {
-        val client = CordaRPCClient(NetworkHostAndPort(config.host, config.port.toInt()))
+    private fun initializeConnection(x500: CordaX500Name, config: CordaNodeConfiguration, enableReconnect: Boolean = true): CordaRPCConnection? {
+        val client = CordaRPCClient(hostAndPort = NetworkHostAndPort(config.host, config.port.toInt()),
+                                    configuration = CordaRPCClientConfiguration(maxReconnectAttempts = 3,
+                                            connectionRetryInterval = Duration.ofSeconds(5),
+                                            connectionMaxRetryInterval = Duration.ofSeconds(20)))
         var connection: CordaRPCConnection? = null
+
         try {
-            logger.trace("Starting connection for $config")
-            connection = client.start(config.user, config.password)
-            logger.trace("Connection created for $config")
+            logger.debug("Starting connection for $config")
+            connection = client.start(config.user, config.password,
+                    if (enableReconnect) GracefulReconnect(
+                            Runnable {
+                                logger.debug("{}: disconnected", x500)
+                            },
+                            Runnable {
+                                logger.debug("{}: reconnected", x500)
+                            })
+                    else null)
+
+            if (connection != null) {
+                logger.debug("{}: connection created", x500)
+            } else {
+                logger.debug("{}: could not start connection", x500)
+            }
         } catch (e: Exception) {
-            logger.trace("Could not start connection for $config", e)
+            logger.debug("{}: could not start connection", x500, e)
         }
 
         return connection
