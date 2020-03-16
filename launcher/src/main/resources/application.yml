@@ -54,7 +54,7 @@ camunda:
 ledgertech:
   corda:
     watcher:
-      fixedRate: 5000
+      fixedRate: 60000
       initialDelay: 1000
       queueName: default
 
