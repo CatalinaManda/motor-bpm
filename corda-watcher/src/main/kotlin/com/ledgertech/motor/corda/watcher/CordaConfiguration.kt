@@ -26,4 +26,6 @@ class CordaNodeConfiguration {
 
 class WatcherConfig {
     var fixedRate: Long = 5000
+    var initialDelay: Long = 1000
+    var queueName: String = "default"
 }

@@ -14,6 +14,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Scope
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
@@ -25,6 +26,9 @@ class CordaWatcher(val x500Name: String) {
     @Autowired lateinit var rabbitTemplate: RabbitTemplate
     @Autowired lateinit var rpc: CordaRPC
     @Autowired lateinit var state: WatcherStateRepository
+
+    @Value("#{cordaConfiguration.watcher.queueName}")
+    val queueName: String = "default"
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(CordaWatcher::class.java)
@@ -40,7 +44,8 @@ class CordaWatcher(val x500Name: String) {
         logger.info("Corda watcher destroyed: {}", this.x500Name)
     }
 
-    @Scheduled(fixedRateString ="#{cordaConfiguration.watcher.fixedRate}", initialDelay=1000)
+    @Scheduled(fixedRateString ="#{cordaConfiguration.watcher.fixedRate}",
+               initialDelayString="#{cordaConfiguration.watcher.initialDelay}")
     fun lookForEvents() {
         logger.info("{}: Looking for states changes", this.x500Name)
 
@@ -85,7 +90,7 @@ class CordaWatcher(val x500Name: String) {
                     recordedTime = recordedTime
             )
 
-            this.rabbitTemplate.convertAndSend("default", message)
+            this.rabbitTemplate.convertAndSend(this.queueName, message)
         } else {
             logger.info("event {} is ignored as having a not-relevant type", state)
         }

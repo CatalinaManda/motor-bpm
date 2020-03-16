@@ -55,6 +55,8 @@ ledgertech:
   corda:
     watcher:
       fixedRate: 5000
+      initialDelay: 1000
+      queueName: default
 
     nodes:
       -
