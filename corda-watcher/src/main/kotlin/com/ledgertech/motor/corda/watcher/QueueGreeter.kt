@@ -6,7 +6,7 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 
 @Component(value = "queueGreeter")
-class Greeter (
+class QueueGreeter (
         @Autowired val rabbitTemplate: RabbitTemplate
 ): CommandLineRunner {
     override fun run(vararg strings: String) {
