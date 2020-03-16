@@ -18,21 +18,28 @@ import org.springframework.context.annotation.Scope
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
 import java.util.*
+import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 @Scope("prototype")
 class CordaWatcher(val x500Name: String) {
     @Autowired lateinit var rabbitTemplate: RabbitTemplate
     @Autowired lateinit var rpc: CordaRPC
-
-    init {
-        logger.info("CREATED")
-    }
+    @Autowired lateinit var state: WatcherStateRepository
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(CordaWatcher::class.java)
     }
 
-    private var lastTimestamp = Instant.MIN
+    @PostConstruct
+    fun postConstruct() {
+        logger.info("Corda watcher created: {}", this.x500Name)
+    }
+
+    @PreDestroy
+    fun preDestroy() {
+        logger.info("Corda watcher destroyed: {}", this.x500Name)
+    }
 
     @Scheduled(fixedRateString ="#{cordaConfiguration.watcher.fixedRate}", initialDelay=1000)
     fun lookForEvents() {
@@ -41,7 +48,7 @@ class CordaWatcher(val x500Name: String) {
         var conn = this.rpc.ops(this.x500Name)
         val timeCondition: QueryCriteria.TimeCondition = QueryCriteria.TimeCondition(
                 QueryCriteria.TimeInstantType.RECORDED,
-                ColumnPredicate.Between(this.lastTimestamp, Instant.now()))
+                ColumnPredicate.Between(this.state.getTime(this.x500Name), Instant.now()))
 
         val pages = conn?.vaultQueryByCriteria(
                 contractStateType = LinearState::class.java,
@@ -55,7 +62,7 @@ class CordaWatcher(val x500Name: String) {
             states.forEach { (state, meta) ->
                 notifyEvent(state, meta.recordedTime)
 
-                this.lastTimestamp = meta.recordedTime
+                this.state.updateTime(this.x500Name, meta.recordedTime)
             }
         }
     }
