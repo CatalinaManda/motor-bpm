@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.scheduling.annotation.Scheduled
 import java.time.Instant
-import java.util.*
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
@@ -81,7 +80,7 @@ class CordaWatcher(val x500Name: String) {
             val message = StateChangedEventImpl(
                     node = this.x500Name,
                     stateType = StateType(stateType),
-                    stateLinearId = LinearId(id = UUID.randomUUID()),
+                    stateLinearId = LinearId(externalId = state.linearId.externalId, id = state.linearId.id),
                     stateId = sr.ref.toString(),
                     recordedTime = recordedTime
             )
