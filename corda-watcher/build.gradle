@@ -11,6 +11,11 @@ dependencies {
     implementation project(':corda-messages')
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
+
+    implementation "com.ledgertech:corda-motor-contracts:0.1.9-SNAPSHOT"
+
+    implementation "javax.json:javax.json-api:1.1.4"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1"
 }
 
 bootJar {

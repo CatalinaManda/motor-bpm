@@ -53,6 +53,9 @@ camunda:
 
 ledgertech:
   corda:
+    watcher:
+      fixedRate: 5000
+
     nodes:
       -
         name: O=Customers1,L=London,C=GB
