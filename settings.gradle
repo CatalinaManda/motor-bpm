@@ -1,8 +1,8 @@
 rootProject.name = "motor-bpm"
 
-include 'bpm'
+include 'bpm-engine'
 include 'broker'
 include 'launcher'
 include 'corda-watcher'
-include 'receiver'
+include 'bpm-engine-bridge'
 include 'corda-messages'

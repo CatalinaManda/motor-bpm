@@ -11,10 +11,10 @@ dependencies {
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.security:spring-security-test"
 
-    implementation project(':bpm')
+    implementation project(':bpm-engine')
     implementation project(':broker')
     implementation project(':corda-watcher')
-    implementation project(':receiver')
+    implementation project(':bpm-engine-bridge')
 }
 
 bootRun {
