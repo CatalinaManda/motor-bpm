@@ -3,6 +3,8 @@ apply plugin: "io.spring.dependency-management"
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-amqp"
+    implementation "org.camunda.bpm:camunda-engine-spring:7.12.0"
+
     implementation project(':corda-messages')
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"

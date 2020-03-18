@@ -1,4 +1,4 @@
-package com.ledgertech.motor.bpm.model
+package com.ledgertech.motor.bpm.greeter
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -9,7 +9,7 @@ class Greeter {
         val L = LoggerFactory.getLogger(Greeter::class.java)
     }
 
-    fun say(what: String) {
-        L.info("Said: $what")
+    fun hello(what: String) {
+        L.info("The process said: $what")
     }
 }

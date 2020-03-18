@@ -14,6 +14,7 @@ dependencies {
     implementation project(':bpm')
     implementation project(':broker')
     implementation project(':corda-watcher')
+    implementation project(':receiver')
 }
 
 bootRun {
