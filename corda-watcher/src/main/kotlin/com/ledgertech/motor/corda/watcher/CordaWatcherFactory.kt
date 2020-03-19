@@ -9,5 +9,5 @@ import org.springframework.context.annotation.Scope
 class CordaWatcherFactory {
     @Bean
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    fun create(name: String) = CordaWatcher(name)
+    fun create(name: String, config: CordaConfiguration) = CordaWatcher(name, config)
 }

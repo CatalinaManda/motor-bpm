@@ -1,9 +1,9 @@
 package com.ledgertech.motor.corda.watcher
 
 import com.ledgertech.motor.contracts.ClaimContract
-import com.ledgertech.motor.contracts.FirstNotificationOfLossContract
-import com.ledgertech.motor.contracts.PolicyContract
 import com.ledgertech.motor.corda.messages.LinearId
+import com.ledgertech.motor.corda.messages.StateCreatedEventImpl
+import com.ledgertech.motor.corda.messages.StateUpdatedEventImpl
 import com.ledgertech.motor.corda.messages.StateType
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.LinearState
@@ -22,13 +22,12 @@ import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
 @Scope("prototype")
-class CordaWatcher(val x500Name: String) {
+class CordaWatcher(val x500Name: String, val config: CordaConfiguration) {
     @Autowired lateinit var rabbitTemplate: RabbitTemplate
     @Autowired lateinit var rpc: CordaRPC
     @Autowired lateinit var state: WatcherStateRepository
 
-    @Value("#{cordaConfiguration.watcher.queueName}")
-    val queueName: String = "default"
+    private val queueName: String = this.config.events.queueName
 
     companion object {
         val logger: Logger = LoggerFactory.getLogger(CordaWatcher::class.java)
@@ -82,25 +81,24 @@ class CordaWatcher(val x500Name: String) {
     private fun notifyEvent(sr: StateAndRef<ContractState>, recordedTime: Instant) {
         val state = sr.state.data as LinearState
 
-        val stateType = when (state) {
-            is FirstNotificationOfLossContract.State -> "FNOL"
-            is PolicyContract.State -> "POLICY"
-            is ClaimContract.State -> "CLAIM"
+        val stateType = when {
+            state is ClaimContract.State && state.status == ClaimContract.Status.REPORTED -> StateType.CLAIM
             else -> null
         }
 
         if (stateType != null) {
-            val message = StateChangedEventImpl(
+            val message = StateCreatedEventImpl(
                     node = this.x500Name,
-                    stateType = StateType(stateType),
+                    stateType = stateType,
                     stateLinearId = LinearId(externalId = state.linearId.externalId, id = state.linearId.id),
                     stateId = sr.ref.toString(),
-                    recordedTime = recordedTime
+                    recordedTime = recordedTime,
+                    jsonClaim = null
             )
 
             this.rabbitTemplate.convertAndSend(this.queueName, message)
         } else {
-            logger.info("event {} is ignored as having a not-relevant type", state)
+            logger.debug("event {} is ignored as having a not-relevant type", state)
         }
     }
 }

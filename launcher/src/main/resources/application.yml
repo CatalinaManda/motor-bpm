@@ -52,10 +52,17 @@ camunda:
     deployment-resource-pattern: classpath:/bpm/**/*.bpmn20.xml
 
 ledgertech:
+  bpm:
+    events:
+      queueName: default
+
   corda:
     watcher:
+      enabled: true
       fixedRate: 60000
       initialDelay: 1000
+
+    events:
       queueName: default
 
     nodes:

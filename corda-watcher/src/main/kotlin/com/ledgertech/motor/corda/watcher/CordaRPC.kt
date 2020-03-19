@@ -1,8 +1,5 @@
 package com.ledgertech.motor.corda.watcher
 
-import com.ledgertech.motor.corda.messages.LinearId
-import com.ledgertech.motor.corda.messages.StateChangedEvent
-import com.ledgertech.motor.corda.messages.StateType
 import net.corda.client.rpc.CordaRPCClient
 import net.corda.client.rpc.CordaRPCClientConfiguration
 import net.corda.client.rpc.CordaRPCConnection
@@ -15,20 +12,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.time.Duration
-import java.time.Instant
-import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
-
-data class StateChangedEventImpl(
-        override val node: String,
-        override val stateType: StateType,
-        override val stateLinearId: LinearId,
-        override val stateId: String,
-        override val recordedTime: Instant
-): StateChangedEvent {
-    override val eventType: String = "STATE_UPDATE"
-    override val payload: Any? = null
-}
 
 @Component
 class CordaRPC {
